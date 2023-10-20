@@ -1,13 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux'; // Импортируем useSelector
+import { useSelector, useDispatch } from 'react-redux';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { ContactFilter } from 'components/ContactFilter/ContactFilter';
 import css from './App.module.css';
+import { deleteContact } from '../../redux/contactSlice'; // Импортируйте функцию deleteContact
 
 export function App() {
-  const contacts = useSelector(state => state.contacts.contactList); // Заменяем useState и useEffect
+  const contacts = useSelector(state => state.contacts.contactList);
   const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch(); // Используйте useDispatch для доступа к функции deleteContact
+
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id)); // Вызовите deleteContact с помощью dispatch
+  };
 
   const filteredContacts = contacts.filter(
     contact =>
@@ -21,7 +27,11 @@ export function App() {
       <ContactForm />
       <h2 className={css.appcontactstitle}>Contacts</h2>
       <ContactFilter />
-      <ContactList contacts={filteredContacts} />
+      <ContactList
+        contacts={filteredContacts}
+        onDeleteContact={handleDeleteContact}
+      />{' '}
+      {/* Передайте onDeleteContact в ContactList */}
     </div>
   );
 }

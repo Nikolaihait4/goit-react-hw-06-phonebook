@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { addContact } from '../../redux/contactSlice';
 import css from './ContactForm.module.css';
 
@@ -9,6 +9,7 @@ export const ContactForm = () => {
     number: '',
   });
 
+  const contacts = useSelector(state => state.contacts.contactList);
   const dispatch = useDispatch();
 
   const handleInputChange = e => {
@@ -21,7 +22,14 @@ export const ContactForm = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    dispatch(addContact(formData)); // Используем dispatch для добавления контакта
+
+    if (contacts.some(contact => contact.name === formData.name)) {
+      alert(`Контакт с именем ${formData.name} уже существует!`);
+      setFormData({ name: '', number: '' }); // Очистка полей после алерта
+      return;
+    }
+
+    dispatch(addContact(formData));
     setFormData({ name: '', number: '' });
   };
 
